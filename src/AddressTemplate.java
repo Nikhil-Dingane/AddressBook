@@ -78,9 +78,9 @@ public class AddressTemplate implements Comparable<AddressTemplate>, Serializabl
 
 	@Override
 	public String toString() {
-		return new StringBuffer("ID:").append(this.id).append("First name:").append(this.firstName).append("Last name:")
-				.append(this.lastName).append("Phone number:").append(this.phoneNumber).append("Adress:")
-				.append(this.adress).append("Email ID:").append(this.emailAddress).toString();
+		return new StringBuffer("ID: ").append(this.id).append("\nFirst name: ").append(this.firstName)
+				.append("\nLast name: ").append(this.lastName).append("\nPhone number: ").append(this.phoneNumber)
+				.append("\nAdress: ").append(this.adress).append("\nEmail ID: ").append(this.emailAddress).toString();
 	}
 
 	@Override
@@ -99,10 +99,10 @@ public class AddressTemplate implements Comparable<AddressTemplate>, Serializabl
 	}
 
 	public boolean equals(Object obj) {
-		AddressTemplate record = (AddressTemplate) obj;
+		AddressTemplate addressBookEntry = (AddressTemplate) obj;
 
-		if ((this.lastName.equals(record.lastName)) && (this.firstName.equals(record.firstName))
-				&& (this.phoneNumber.equals(record.phoneNumber))) {
+		if ((this.lastName.equals(addressBookEntry.lastName)) && (this.firstName.equals(addressBookEntry.firstName))
+				&& (this.phoneNumber.equals(addressBookEntry.phoneNumber))) {
 			return true;
 		} else {
 			return false;

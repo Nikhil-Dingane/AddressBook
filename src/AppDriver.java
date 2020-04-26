@@ -5,9 +5,12 @@ import java.util.List;
 
 public class AppDriver {
 	public static void main(String[] args) throws IOException {
+
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
 		AddressBook addressBook = new AddressBook();
+
+		AddressTemplate addressBookEntry = new AddressTemplate();
 
 		while (true) {
 
@@ -25,7 +28,17 @@ public class AppDriver {
 
 			System.out.println("\nPlease choose what you'd like to do with the database:");
 
-			int choice = Integer.parseInt(br.readLine());
+			int choice = 0;
+			try {
+				choice = Integer.parseInt(br.readLine());
+			} catch (NumberFormatException e) {
+				System.out.println("Please enter number as a input.");
+				br.readLine();
+				continue;
+			} catch (Exception e) {
+				e.printStackTrace();
+				continue;
+			}
 
 			switch (choice) {
 			case 1:
@@ -41,20 +54,20 @@ public class AppDriver {
 
 				System.out.println("******************************* New Entry *******************************");
 
-				AddressTemplate record = new AddressTemplate();
+				addressBookEntry = new AddressTemplate();
 
 				System.out.println("Enter first name:");
-				record.setFirstName(br.readLine());
+				addressBookEntry.setFirstName(br.readLine());
 				System.out.println("Enter last name:");
-				record.setLastName(br.readLine());
+				addressBookEntry.setLastName(br.readLine());
 				System.out.println("Enter phone number:");
-				record.setPhoneNumber(br.readLine());
+				addressBookEntry.setPhoneNumber(br.readLine());
 				System.out.println("Enter address:");
-				record.setAdress(br.readLine());
+				addressBookEntry.setAdress(br.readLine());
 				System.out.println("Enter email address:");
-				record.setEmailAddress(br.readLine());
+				addressBookEntry.setEmailAddress(br.readLine());
 
-				if (addressBook.addRecord(record)) {
+				if (addressBook.addRecord(addressBookEntry)) {
 					System.out.println("Record successfully inserted");
 				} else {
 					System.out.println("Unable to insert record");
@@ -78,18 +91,18 @@ public class AppDriver {
 						System.out.println("No such a reocrd to delete or Unable to remove record");
 					}
 				} else if (removeChoice == 2) {
-					AddressTemplate removablerecord = new AddressTemplate();
+					addressBookEntry = new AddressTemplate();
 
 					System.out.println("Enter first name:");
-					removablerecord.setFirstName(br.readLine());
+					addressBookEntry.setFirstName(br.readLine());
 					System.out.println("Enter last name:");
-					removablerecord.setLastName(br.readLine());
+					addressBookEntry.setLastName(br.readLine());
 					System.out.println("Enter phone number:");
-					removablerecord.setPhoneNumber(br.readLine());
+					addressBookEntry.setPhoneNumber(br.readLine());
 
-					System.out.println(removablerecord.getFirstName() + removablerecord.getLastName()
-							+ removablerecord.getPhoneNumber());
-					if (addressBook.removeRecord(removablerecord)) {
+					System.out.println(addressBookEntry.getFirstName() + addressBookEntry.getLastName()
+							+ addressBookEntry.getPhoneNumber());
+					if (addressBook.removeRecord(addressBookEntry)) {
 						System.out.println("Record successfully deleted...");
 					} else {
 						System.out.println("No such a reocrd to delete or Unable to remove record");
@@ -105,18 +118,13 @@ public class AppDriver {
 				System.out.println("******************************* Update Entry *******************************");
 				System.out.println("\nUpdate id of the entry to be updated:");
 				int updateId = Integer.parseInt(br.readLine());
-				AddressTemplate recordToBeUpdated = null;
-				List<AddressTemplate> recordToBeUpdatedList = addressBook.search("" + updateId, 6);
-				if (recordToBeUpdatedList.size() == 1) {
-					recordToBeUpdated = recordToBeUpdatedList.get(0);
+				addressBookEntry = null;
+				addressBookEntry = addressBook.searchById(updateId);
+				if (addressBookEntry != null) {
+
 					System.out.println(
 							"***********************************************************************************************");
-					System.out.println("ID : " + recordToBeUpdated.getId());
-					System.out.println("First name : " + recordToBeUpdated.getFirstName());
-					System.out.println("last name : " + recordToBeUpdated.getLastName());
-					System.out.println("Phone number : " + recordToBeUpdated.getPhoneNumber());
-					System.out.println("Address : " + recordToBeUpdated.getAdress());
-					System.out.println("Email ID : " + recordToBeUpdated.getEmailAddress());
+					System.out.println(addressBookEntry);
 					System.out.println(
 							"***********************************************************************************************");
 				} else {
@@ -137,7 +145,7 @@ public class AppDriver {
 				String updateTextString = br.readLine();
 
 				if (updateChoice > 0 && updateChoice < 6) {
-					addressBook.updateRecord(recordToBeUpdated, updateTextString, updateChoice);
+					addressBook.updateRecord(addressBookEntry, updateTextString, updateChoice);
 					System.out.println("Record updated successfully");
 				} else {
 					System.out.println("Invalid choice!!");
@@ -168,15 +176,11 @@ public class AppDriver {
 					if (searchResultList.size() == 0) {
 						System.out.println("No match found!!");
 					} else {
-						for (AddressTemplate singleRecord : searchResultList) {
+						for (AddressTemplate entry : searchResultList) {
+
 							System.out.println(
 									"***********************************************************************************************");
-							System.out.println("ID : " + singleRecord.getId());
-							System.out.println("First name : " + singleRecord.getFirstName());
-							System.out.println("last name : " + singleRecord.getLastName());
-							System.out.println("Phone number : " + singleRecord.getPhoneNumber());
-							System.out.println("Address : " + singleRecord.getAdress());
-							System.out.println("Email ID : " + singleRecord.getEmailAddress());
+							System.out.println(entry);
 						}
 					}
 				} else {
@@ -195,7 +199,7 @@ public class AppDriver {
 				break;
 
 			default:
-				System.out.println("Invalid choic");
+				System.out.println("Invalid choice");
 				break;
 			}
 			System.out.println("\nPress any key to continue.....");

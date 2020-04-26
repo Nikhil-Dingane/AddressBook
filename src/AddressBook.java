@@ -7,10 +7,10 @@ import java.util.Collections;
 import java.util.List;
 
 public class AddressBook {
-	private List<AddressTemplate> addressBookList;
+	private List<AddressTemplate> addressBookList = new ArrayList<AddressTemplate>();
 
 	public AddressBook() {
-		this.addressBookList = new ArrayList<AddressTemplate>();
+
 	}
 
 	public boolean addRecord(AddressTemplate record) {
@@ -19,8 +19,14 @@ public class AddressBook {
 	}
 
 	public boolean removeRecord(int id) {
-		AddressTemplate objAddressTemplate = addressBookList.remove(id);
-		return (objAddressTemplate != null);
+
+		boolean returnValue = false;
+		for (AddressTemplate entry : addressBookList) {
+			if (entry.getId() == id) {
+				returnValue = addressBookList.remove(entry);
+			}
+		}
+		return returnValue;
 	}
 
 	public boolean removeRecord(AddressTemplate record) {
@@ -29,14 +35,10 @@ public class AddressBook {
 
 	public void display() {
 		for (AddressTemplate record : addressBookList) {
+
 			System.out.println(
 					"***********************************************************************************************");
-			System.out.println("ID : " + record.getId());
-			System.out.println("First name : " + record.getFirstName());
-			System.out.println("last name : " + record.getLastName());
-			System.out.println("Phone number : " + record.getPhoneNumber());
-			System.out.println("Address : " + record.getAdress());
-			System.out.println("Email ID : " + record.getEmailAddress());
+			System.out.println(record);
 		}
 	}
 
@@ -106,17 +108,15 @@ public class AddressBook {
 			}
 			return searchResultList;
 		} else if (searchChoice == 6) {
-			try {
-				searchResultList.add(addressBookList.get(Integer.parseInt(searchText) - 1));
-				return searchResultList;
-			} catch (Exception e) {
-				// TODO: handle exception
-				return searchResultList;
-			}
 
-		} else {
-			return searchResultList;
+			AddressTemplate addressBookEntry = searchById(Integer.parseInt(searchText));
+
+			if (addressBookEntry != null) {
+				searchResultList.add(addressBookEntry);
+			}
 		}
+
+		return searchResultList;
 	}
 
 	public void updateRecord(AddressTemplate record, String updateText, int choice) {
@@ -132,5 +132,15 @@ public class AddressBook {
 			record.setEmailAddress(updateText);
 		}
 		addressBookList.set(record.getId() - 1, record);
+	}
+
+	public AddressTemplate searchById(int id) {
+		AddressTemplate addressBookEntry = null;
+		for (AddressTemplate entry : addressBookList) {
+			if (entry.getId() == id) {
+				addressBookEntry = entry;
+			}
+		}
+		return addressBookEntry;
 	}
 }
