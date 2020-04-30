@@ -8,6 +8,8 @@ import java.util.List;
 
 public class AddressBook {
 	private List<AddressTemplate> addressBookList = new ArrayList<AddressTemplate>();
+	private FileReader fileReader = new FileReader("AddressBook.ser");
+	private FileWriter fileWriter = new FileWriter("AddressBook.serss");
 
 	public AddressBook() {
 
@@ -48,9 +50,7 @@ public class AddressBook {
 
 	public void saveRecordsToFile() {
 		try {
-			ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream("AddressBook.ser"));
-			objectOutputStream.writeObject(addressBookList);
-			objectOutputStream.close();
+			fileWriter.writeFile(addressBookList);
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
@@ -61,53 +61,51 @@ public class AddressBook {
 	@SuppressWarnings("unchecked")
 	public void readRecordsFromFile() {
 		try {
-			ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream("AddressBook.ser"));
-			this.addressBookList = (List<AddressTemplate>) objectInputStream.readObject();
-			objectInputStream.close();
+			this.addressBookList = fileReader.readFile();
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
 		}
 	}
 
-	public List search(String searchText, Integer searchChoice) {
+	public List<AddressTemplate> search(String searchText, MyEnums searchChoice) {
 		List<AddressTemplate> searchResultList = new ArrayList<AddressTemplate>();
-		if (searchChoice == 1) {
+		if (searchChoice == MyEnums.SEARCH_BY_FIRST_NAME) {
 			for (AddressTemplate record : addressBookList) {
 				if (record.getFirstName().equals(searchText)) {
 					searchResultList.add(record);
 				}
 			}
 			return searchResultList;
-		} else if (searchChoice == 2) {
+		} else if (searchChoice == MyEnums.SEARCH_BY_LAST_NAME) {
 			for (AddressTemplate record : addressBookList) {
 				if (record.getLastName().equals(searchText)) {
 					searchResultList.add(record);
 				}
 			}
 			return searchResultList;
-		} else if (searchChoice == 3) {
+		} else if (searchChoice == MyEnums.SEARCH_BY_PHONE_NUMBER) {
 			for (AddressTemplate record : addressBookList) {
 				if (record.getPhoneNumber().equals(searchText)) {
 					searchResultList.add(record);
 				}
 			}
 			return searchResultList;
-		} else if (searchChoice == 4) {
+		} else if (searchChoice == MyEnums.SEARCH_BY_ADDRESS) {
 			for (AddressTemplate record : addressBookList) {
 				if (record.getAdress().equals(searchText)) {
 					searchResultList.add(record);
 				}
 			}
 			return searchResultList;
-		} else if (searchChoice == 5) {
+		} else if (searchChoice == MyEnums.SEARCH_BY_EMAIL) {
 			for (AddressTemplate record : addressBookList) {
 				if (record.getEmailAddress().equals(searchText)) {
 					searchResultList.add(record);
 				}
 			}
 			return searchResultList;
-		} else if (searchChoice == 6) {
+		} else if (searchChoice == MyEnums.SEARCH_BY_ID) {
 
 			AddressTemplate addressBookEntry = searchById(Integer.parseInt(searchText));
 
@@ -142,5 +140,20 @@ public class AddressBook {
 			}
 		}
 		return addressBookEntry;
+	}
+
+	public List<AddressTemplate> getAddressBookList() {
+		return addressBookList;
+	}
+
+	public void setAddressBookList(List<AddressTemplate> addressBookList) {
+		this.addressBookList = addressBookList;
+	}
+	
+	@Override
+	protected void finalize() throws Throwable {
+		// TODO Auto-generated method stub
+		fileReader.close();
+		fileWriter.close();
 	}
 }

@@ -7,7 +7,7 @@ public class AppDriver {
 	public static void main(String[] args) throws IOException {
 
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-
+		
 		AddressBook addressBook = new AddressBook();
 
 		AddressTemplate addressBookEntry = new AddressTemplate();
@@ -43,29 +43,19 @@ public class AppDriver {
 			switch (choice) {
 			case 1:
 				addressBook.readRecordsFromFile();
+				System.out.println("Records Successfully read from file.");
 				break;
 
 			case 2:
 				addressBook.saveRecordsToFile();
-				System.out.println("Records Successfully saved to files.");
+				System.out.println("Records Successfully saved to file.");
 				break;
 
 			case 3:
 
 				System.out.println("******************************* New Entry *******************************");
 
-				addressBookEntry = new AddressTemplate();
-
-				System.out.println("Enter first name:");
-				addressBookEntry.setFirstName(br.readLine());
-				System.out.println("Enter last name:");
-				addressBookEntry.setLastName(br.readLine());
-				System.out.println("Enter phone number:");
-				addressBookEntry.setPhoneNumber(br.readLine());
-				System.out.println("Enter address:");
-				addressBookEntry.setAdress(br.readLine());
-				System.out.println("Enter email address:");
-				addressBookEntry.setEmailAddress(br.readLine());
+				addressBookEntry = getUserInfo();
 
 				if (addressBook.addRecord(addressBookEntry)) {
 					System.out.println("Record successfully inserted");
@@ -91,14 +81,7 @@ public class AppDriver {
 						System.out.println("No such a reocrd to delete or Unable to remove record");
 					}
 				} else if (removeChoice == 2) {
-					addressBookEntry = new AddressTemplate();
-
-					System.out.println("Enter first name:");
-					addressBookEntry.setFirstName(br.readLine());
-					System.out.println("Enter last name:");
-					addressBookEntry.setLastName(br.readLine());
-					System.out.println("Enter phone number:");
-					addressBookEntry.setPhoneNumber(br.readLine());
+					addressBookEntry = getUserInfo();
 
 					System.out.println(addressBookEntry.getFirstName() + addressBookEntry.getLastName()
 							+ addressBookEntry.getPhoneNumber());
@@ -171,8 +154,31 @@ public class AppDriver {
 				if (searchChoice > 0 && searchChoice < 7) {
 					System.out.println("Please enter text to be searched:");
 					String searchText = br.readLine();
-					List<AddressTemplate> searchResultList = (List<AddressTemplate>) addressBook.search(searchText,
-							searchChoice);
+					List<AddressTemplate> searchResultList = null;
+					
+					switch (searchChoice) {
+					case 1:
+						searchResultList = addressBook.search(searchText, MyEnums.SEARCH_BY_FIRST_NAME);
+						break;
+					case 2:
+						searchResultList = addressBook.search(searchText, MyEnums.SEARCH_BY_LAST_NAME);
+						break;
+					case 3:
+						searchResultList = addressBook.search(searchText, MyEnums.SEARCH_BY_PHONE_NUMBER);
+						break;
+					case 4:
+						searchResultList = addressBook.search(searchText, MyEnums.SEARCH_BY_ADDRESS);
+						break;
+					case 5:
+						searchResultList = addressBook.search(searchText, MyEnums.SEARCH_BY_EMAIL);
+						break;
+					case 6:
+						searchResultList = addressBook.search(searchText, MyEnums.SEARCH_BY_ID);
+						break;	
+					default:
+						break;
+					}
+					
 					if (searchResultList.size() == 0) {
 						System.out.println("No match found!!");
 					} else {
@@ -210,5 +216,22 @@ public class AppDriver {
 	public static void clearScreen() {
 		System.out.print("\033[H\033[2J");
 		System.out.flush();
+	}
+	
+	public static AddressTemplate getUserInfo() throws IOException
+	{
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		AddressTemplate addressBookEntry = new AddressTemplate();
+		System.out.println("Enter first name:");
+		addressBookEntry.setFirstName(br.readLine());
+		System.out.println("Enter last name:");
+		addressBookEntry.setLastName(br.readLine());
+		System.out.println("Enter phone number:");
+		addressBookEntry.setPhoneNumber(br.readLine());
+		System.out.println("Enter address:");
+		addressBookEntry.setAdress(br.readLine());
+		System.out.println("Enter email address:");
+		addressBookEntry.setEmailAddress(br.readLine());
+		return addressBookEntry;
 	}
 }
