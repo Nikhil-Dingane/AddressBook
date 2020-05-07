@@ -22,6 +22,7 @@ public class FileReader {
 		
 	}
 	
+	@SuppressWarnings("unchecked")
 	public List<AddressTemplate> readFile()	{
 		List<AddressTemplate> addressBookList = new ArrayList<AddressTemplate>();
 		try {

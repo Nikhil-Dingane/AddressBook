@@ -14,6 +14,8 @@ public class AddressTemplate implements Comparable<AddressTemplate>, Serializabl
 	private String phoneNumber;
 	private String adress;
 	private String emailAddress;
+	
+	private static MyEnums sortBy = MyEnums.BY_ID;
 
 	public AddressTemplate() {
 
@@ -27,6 +29,7 @@ public class AddressTemplate implements Comparable<AddressTemplate>, Serializabl
 		this.phoneNumber = phoneNumber;
 		this.adress = adress;
 		this.emailAddress = emailAddress;
+		AddressTemplate.sortBy = MyEnums.BY_ID;
 	}
 
 	public String getFirstName() {
@@ -73,7 +76,23 @@ public class AddressTemplate implements Comparable<AddressTemplate>, Serializabl
 	public int compareTo(AddressTemplate o) {
 		// TODO Auto-generated method stub
 		System.out.println("Inside compareTo");
-		return (this.lastName).toString().compareTo(o.getLastName().toString());
+		//return (this.lastName).toString().compareTo(o.getLastName().toString());
+		switch (sortBy) {
+		case BY_FIRST_NAME:
+			return (this.firstName).toString().compareTo(o.getFirstName().toString());
+		case BY_LAST_NAME:
+			return (this.lastName).toString().compareTo(o.getLastName().toString());
+		case BY_PHONE_NUMBER:
+			return (this.phoneNumber).toString().compareTo(o.getPhoneNumber().toString());
+		case BY_ADDRESS:
+			return (this.adress).toString().compareTo(o.getAdress().toString());
+		case BY_EMAIL:
+			return (this.emailAddress).toString().compareTo(o.getEmailAddress().toString());
+		case BY_ID:
+			return new Integer(this.id).toString().compareTo(new Integer(o.getId()).toString());
+		default:
+			return (this.lastName).toString().compareTo(o.getLastName().toString());
+		}
 	}
 
 	@Override
@@ -107,6 +126,14 @@ public class AddressTemplate implements Comparable<AddressTemplate>, Serializabl
 		} else {
 			return false;
 		}
+	}
+
+	public static MyEnums getSortBy() {
+		return sortBy;
+	}
+
+	public static void setSortBy(MyEnums sortBy) {
+		AddressTemplate.sortBy = sortBy;
 	}
 
 }

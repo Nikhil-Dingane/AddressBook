@@ -1,20 +1,21 @@
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 
 public class AddressBook {
 	private List<AddressTemplate> addressBookList = new ArrayList<AddressTemplate>();
 	private FileReader fileReader = new FileReader("AddressBook.ser");
 	private FileWriter fileWriter = new FileWriter("AddressBook.serss");
 
+	
+	
 	public AddressBook() {
 
 	}
-
+	
+	
 	public boolean addRecord(AddressTemplate record) {
 		record.setId(addressBookList.size() + 1);
 		return addressBookList.add(record);
@@ -38,13 +39,13 @@ public class AddressBook {
 	public void display() {
 		for (AddressTemplate record : addressBookList) {
 
-			System.out.println(
-					"***********************************************************************************************");
+			System.out.println("***********************************************************************************************");
 			System.out.println(record);
 		}
 	}
 
-	public void sort() {
+	public void sort(MyEnums sortBy) {
+		AddressTemplate.setSortBy(sortBy);
 		Collections.sort(addressBookList);
 	}
 
@@ -58,7 +59,6 @@ public class AddressBook {
 
 	}
 
-	@SuppressWarnings("unchecked")
 	public void readRecordsFromFile() {
 		try {
 			this.addressBookList = fileReader.readFile();
@@ -70,42 +70,42 @@ public class AddressBook {
 
 	public List<AddressTemplate> search(String searchText, MyEnums searchChoice) {
 		List<AddressTemplate> searchResultList = new ArrayList<AddressTemplate>();
-		if (searchChoice == MyEnums.SEARCH_BY_FIRST_NAME) {
+		if (searchChoice == MyEnums.BY_FIRST_NAME) {
 			for (AddressTemplate record : addressBookList) {
 				if (record.getFirstName().equals(searchText)) {
 					searchResultList.add(record);
 				}
 			}
 			return searchResultList;
-		} else if (searchChoice == MyEnums.SEARCH_BY_LAST_NAME) {
+		} else if (searchChoice == MyEnums.BY_LAST_NAME) {
 			for (AddressTemplate record : addressBookList) {
 				if (record.getLastName().equals(searchText)) {
 					searchResultList.add(record);
 				}
 			}
 			return searchResultList;
-		} else if (searchChoice == MyEnums.SEARCH_BY_PHONE_NUMBER) {
+		} else if (searchChoice == MyEnums.BY_PHONE_NUMBER) {
 			for (AddressTemplate record : addressBookList) {
 				if (record.getPhoneNumber().equals(searchText)) {
 					searchResultList.add(record);
 				}
 			}
 			return searchResultList;
-		} else if (searchChoice == MyEnums.SEARCH_BY_ADDRESS) {
+		} else if (searchChoice == MyEnums.BY_ADDRESS) {
 			for (AddressTemplate record : addressBookList) {
 				if (record.getAdress().equals(searchText)) {
 					searchResultList.add(record);
 				}
 			}
 			return searchResultList;
-		} else if (searchChoice == MyEnums.SEARCH_BY_EMAIL) {
+		} else if (searchChoice == MyEnums.BY_EMAIL) {
 			for (AddressTemplate record : addressBookList) {
 				if (record.getEmailAddress().equals(searchText)) {
 					searchResultList.add(record);
 				}
 			}
 			return searchResultList;
-		} else if (searchChoice == MyEnums.SEARCH_BY_ID) {
+		} else if (searchChoice == MyEnums.BY_ID) {
 
 			AddressTemplate addressBookEntry = searchById(Integer.parseInt(searchText));
 
@@ -150,6 +150,23 @@ public class AddressBook {
 		this.addressBookList = addressBookList;
 	}
 	
+	public FileReader getFileReader() {
+		return fileReader;
+	}
+
+	public void setFileReader(FileReader fileReader) {
+		this.fileReader = fileReader;
+	}
+
+	public FileWriter getFileWriter() {
+		return fileWriter;
+	}
+
+	public void setFileWriter(FileWriter fileWriter) {
+		this.fileWriter = fileWriter;
+	}
+
+
 	@Override
 	protected void finalize() throws Throwable {
 		// TODO Auto-generated method stub

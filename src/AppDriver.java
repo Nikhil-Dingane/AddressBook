@@ -42,13 +42,11 @@ public class AppDriver {
 
 			switch (choice) {
 			case 1:
-				addressBook.readRecordsFromFile();
-				System.out.println("Records Successfully read from file.");
+				addressBook.readRecordsFromFile();				
 				break;
 
 			case 2:
 				addressBook.saveRecordsToFile();
-				System.out.println("Records Successfully saved to file.");
 				break;
 
 			case 3:
@@ -136,20 +134,39 @@ public class AppDriver {
 				break;
 
 			case 6:
-				addressBook.sort();
+				clearScreen();
+				System.out.println("******************************* Sort Entry *******************************");
+				printOptions();
+				int sortChoice = Integer.parseInt(br.readLine());
+				switch (sortChoice) {
+				case 1:
+					addressBook.sort(MyEnums.BY_FIRST_NAME);
+					break;
+				case 2:
+					addressBook.sort(MyEnums.BY_LAST_NAME);
+					break;
+				case 3:
+					addressBook.sort(MyEnums.BY_PHONE_NUMBER);
+					break;
+				case 4:
+					addressBook.sort(MyEnums.BY_ADDRESS);	
+					break;
+				case 5:
+					addressBook.sort(MyEnums.BY_EMAIL);		
+					break;
+				case 6:
+					addressBook.sort(MyEnums.BY_ID);	
+					break;	
+				default:
+					break;
+				}
 				break;
 
 			case 7:
 				clearScreen();
 				System.out.println("******************************* Search Entry *******************************");
 				System.out.println("\nSearch the entry by follwoing:");
-				System.out.println("1) By first name:");
-				System.out.println("2) By last name:");
-				System.out.println("3) By phone number :");
-				System.out.println("4) By address:");
-				System.out.println("5) By email id:");
-				System.out.println("6) By ID:");
-				System.out.println("Enter your choice:");
+				printOptions();
 				int searchChoice = Integer.parseInt(br.readLine());
 				if (searchChoice > 0 && searchChoice < 7) {
 					System.out.println("Please enter text to be searched:");
@@ -158,22 +175,22 @@ public class AppDriver {
 					
 					switch (searchChoice) {
 					case 1:
-						searchResultList = addressBook.search(searchText, MyEnums.SEARCH_BY_FIRST_NAME);
+						searchResultList = addressBook.search(searchText, MyEnums.BY_FIRST_NAME);
 						break;
 					case 2:
-						searchResultList = addressBook.search(searchText, MyEnums.SEARCH_BY_LAST_NAME);
+						searchResultList = addressBook.search(searchText, MyEnums.BY_LAST_NAME);
 						break;
 					case 3:
-						searchResultList = addressBook.search(searchText, MyEnums.SEARCH_BY_PHONE_NUMBER);
+						searchResultList = addressBook.search(searchText, MyEnums.BY_PHONE_NUMBER);
 						break;
 					case 4:
-						searchResultList = addressBook.search(searchText, MyEnums.SEARCH_BY_ADDRESS);
+						searchResultList = addressBook.search(searchText, MyEnums.BY_ADDRESS);
 						break;
 					case 5:
-						searchResultList = addressBook.search(searchText, MyEnums.SEARCH_BY_EMAIL);
+						searchResultList = addressBook.search(searchText, MyEnums.BY_EMAIL);
 						break;
 					case 6:
-						searchResultList = addressBook.search(searchText, MyEnums.SEARCH_BY_ID);
+						searchResultList = addressBook.search(searchText, MyEnums.BY_ID);
 						break;	
 					default:
 						break;
@@ -214,8 +231,13 @@ public class AppDriver {
 	}
 
 	public static void clearScreen() {
-		System.out.print("\033[H\033[2J");
-		System.out.flush();
+		 try{
+			 System.out.print("\033[H\033[2J");
+			 System.out.flush();  
+		} catch (final Exception e){
+		        //  Handle any exceptions.
+		    	e.printStackTrace();
+		}
 	}
 	
 	public static AddressTemplate getUserInfo() throws IOException
@@ -233,5 +255,15 @@ public class AppDriver {
 		System.out.println("Enter email address:");
 		addressBookEntry.setEmailAddress(br.readLine());
 		return addressBookEntry;
+	}
+	
+	public static void printOptions() {
+		System.out.println("1) By first name:");
+		System.out.println("2) By last name:");
+		System.out.println("3) By phone number :");
+		System.out.println("4) By address:");
+		System.out.println("5) By email id:");
+		System.out.println("6) By ID:");
+		System.out.println("Enter your choice:");
 	}
 }
