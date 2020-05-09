@@ -15,7 +15,7 @@ public class AddressTemplate implements Comparable<AddressTemplate>, Serializabl
 	private String adress;
 	private String emailAddress;
 	
-	private static MyEnums sortBy = MyEnums.BY_ID;
+	private static FieldEnums sortBy = FieldEnums.BY_ID;
 
 	public AddressTemplate() {
 
@@ -29,7 +29,6 @@ public class AddressTemplate implements Comparable<AddressTemplate>, Serializabl
 		this.phoneNumber = phoneNumber;
 		this.adress = adress;
 		this.emailAddress = emailAddress;
-		AddressTemplate.sortBy = MyEnums.BY_ID;
 	}
 
 	public String getFirstName() {
@@ -79,19 +78,19 @@ public class AddressTemplate implements Comparable<AddressTemplate>, Serializabl
 		//return (this.lastName).toString().compareTo(o.getLastName().toString());
 		switch (sortBy) {
 		case BY_FIRST_NAME:
-			return (this.firstName).toString().compareTo(o.getFirstName().toString());
+			return (this.firstName).compareTo(o.getFirstName());
 		case BY_LAST_NAME:
-			return (this.lastName).toString().compareTo(o.getLastName().toString());
+			return (this.lastName).compareTo(o.getLastName());
 		case BY_PHONE_NUMBER:
-			return (this.phoneNumber).toString().compareTo(o.getPhoneNumber().toString());
+			return (this.phoneNumber).compareTo(o.getPhoneNumber());
 		case BY_ADDRESS:
-			return (this.adress).toString().compareTo(o.getAdress().toString());
+			return (this.adress).compareTo(o.getAdress());
 		case BY_EMAIL:
-			return (this.emailAddress).toString().compareTo(o.getEmailAddress().toString());
+			return (this.emailAddress).compareTo(o.getEmailAddress());
 		case BY_ID:
-			return new Integer(this.id).toString().compareTo(new Integer(o.getId()).toString());
+			return String.valueOf(this.id).compareTo(String.valueOf(o.getId()));
 		default:
-			return (this.lastName).toString().compareTo(o.getLastName().toString());
+			return String.valueOf(this.id).compareTo(String.valueOf(o.getId()));
 		}
 	}
 
@@ -128,11 +127,11 @@ public class AddressTemplate implements Comparable<AddressTemplate>, Serializabl
 		}
 	}
 
-	public static MyEnums getSortBy() {
+	public static FieldEnums getSortBy() {
 		return sortBy;
 	}
 
-	public static void setSortBy(MyEnums sortBy) {
+	public static void setSortBy(FieldEnums sortBy) {
 		AddressTemplate.sortBy = sortBy;
 	}
 

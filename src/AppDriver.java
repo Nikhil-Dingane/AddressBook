@@ -3,6 +3,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
 
+import javax.swing.plaf.synth.SynthFormattedTextFieldUI;
+
 public class AppDriver {
 	public static void main(String[] args) throws IOException {
 
@@ -29,6 +31,7 @@ public class AppDriver {
 			System.out.println("\nPlease choose what you'd like to do with the database:");
 
 			int choice = 0;
+			String fileName = "AddressBook.ser";
 			try {
 				choice = Integer.parseInt(br.readLine());
 			} catch (NumberFormatException e) {
@@ -42,11 +45,75 @@ public class AppDriver {
 
 			switch (choice) {
 			case 1:
-				addressBook.readRecordsFromFile();				
+				if(fileName == "" && addressBook.getFileReader() == null){
+					
+					System.out.println("Enter a file name of a address book to be load:");
+					fileName = br.readLine();
+					addressBook.setFileReader(new FileReader(fileName));
+					addressBook.readRecordsFromFile(fileName);	
+					
+				} else {
+					
+					String option = "";
+					while( true ) {
+						System.out.println("\nDo you want to read the data from this file(y/n) : "+fileName);
+						option = br.readLine();
+						if(option.toUpperCase().equals("Y")) {
+							if(addressBook.getFileReader()==null) {
+								addressBook.setFileReader(new FileReader(fileName));
+							}
+							addressBook.readRecordsFromFile(fileName);
+							break;
+						}
+						else if(option.toUpperCase().equals("N")) {
+							System.out.println("\nEnter a file name of a address book to be load:");
+							fileName = br.readLine();
+							addressBook.setFileReader(new FileReader(fileName));
+							addressBook.readRecordsFromFile(fileName);	
+							break;
+						}
+						else {
+							System.out.print("\nPlease enter valid option");
+						}
+					}
+				}					
+				
 				break;
 
 			case 2:
-				addressBook.saveRecordsToFile();
+				
+				if(fileName == "" && addressBook.getFileWriter() == null){
+					
+					System.out.println("Enter a file name of a address book to be save:");
+					fileName = br.readLine();
+					addressBook.setFileWriter(new FileWriter(fileName));
+					addressBook.saveRecordsToFile(fileName);	
+					
+				} else {
+					
+					String option = "";
+					while( true ) {
+						System.out.println("\nDo you want to save the data to this file(y/n) : "+fileName);
+						option = br.readLine();
+						if(option.toUpperCase().equals("Y")) {
+							if(addressBook.getFileWriter() == null) {
+								addressBook.setFileWriter(new FileWriter(fileName));
+							}
+							addressBook.saveRecordsToFile(fileName);
+							break;
+						}
+						else if(option.toUpperCase().equals("N")) {
+							System.out.println("\nEnter a file name of a address book to be load:");
+							fileName = br.readLine();
+							addressBook.setFileWriter(new FileWriter(fileName));
+							addressBook.saveRecordsToFile(fileName);	
+							break;
+						}
+						else {
+							System.out.print("\nPlease enter valid option");
+						}
+					}
+				}
 				break;
 
 			case 3:
@@ -140,22 +207,22 @@ public class AppDriver {
 				int sortChoice = Integer.parseInt(br.readLine());
 				switch (sortChoice) {
 				case 1:
-					addressBook.sort(MyEnums.BY_FIRST_NAME);
+					addressBook.sort(FieldEnums.BY_FIRST_NAME);
 					break;
 				case 2:
-					addressBook.sort(MyEnums.BY_LAST_NAME);
+					addressBook.sort(FieldEnums.BY_LAST_NAME);
 					break;
 				case 3:
-					addressBook.sort(MyEnums.BY_PHONE_NUMBER);
+					addressBook.sort(FieldEnums.BY_PHONE_NUMBER);
 					break;
 				case 4:
-					addressBook.sort(MyEnums.BY_ADDRESS);	
+					addressBook.sort(FieldEnums.BY_ADDRESS);	
 					break;
 				case 5:
-					addressBook.sort(MyEnums.BY_EMAIL);		
+					addressBook.sort(FieldEnums.BY_EMAIL);		
 					break;
 				case 6:
-					addressBook.sort(MyEnums.BY_ID);	
+					addressBook.sort(FieldEnums.BY_ID);	
 					break;	
 				default:
 					break;
@@ -175,22 +242,22 @@ public class AppDriver {
 					
 					switch (searchChoice) {
 					case 1:
-						searchResultList = addressBook.search(searchText, MyEnums.BY_FIRST_NAME);
+						searchResultList = addressBook.search(searchText, FieldEnums.BY_FIRST_NAME);
 						break;
 					case 2:
-						searchResultList = addressBook.search(searchText, MyEnums.BY_LAST_NAME);
+						searchResultList = addressBook.search(searchText, FieldEnums.BY_LAST_NAME);
 						break;
 					case 3:
-						searchResultList = addressBook.search(searchText, MyEnums.BY_PHONE_NUMBER);
+						searchResultList = addressBook.search(searchText, FieldEnums.BY_PHONE_NUMBER);
 						break;
 					case 4:
-						searchResultList = addressBook.search(searchText, MyEnums.BY_ADDRESS);
+						searchResultList = addressBook.search(searchText, FieldEnums.BY_ADDRESS);
 						break;
 					case 5:
-						searchResultList = addressBook.search(searchText, MyEnums.BY_EMAIL);
+						searchResultList = addressBook.search(searchText, FieldEnums.BY_EMAIL);
 						break;
 					case 6:
-						searchResultList = addressBook.search(searchText, MyEnums.BY_ID);
+						searchResultList = addressBook.search(searchText, FieldEnums.BY_ID);
 						break;	
 					default:
 						break;

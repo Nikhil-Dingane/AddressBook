@@ -1,4 +1,4 @@
 
-public enum MyEnums {
+public enum FieldEnums {
 	BY_FIRST_NAME, BY_LAST_NAME, BY_PHONE_NUMBER, BY_EMAIL, BY_ADDRESS, BY_ID
 }
