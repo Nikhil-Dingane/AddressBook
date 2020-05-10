@@ -1,18 +1,20 @@
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
 
-import javax.swing.plaf.synth.SynthFormattedTextFieldUI;
 
 public class AppDriver {
 	public static void main(String[] args) throws IOException {
 
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		
+
 		AddressBook addressBook = new AddressBook();
 
 		AddressTemplate addressBookEntry = new AddressTemplate();
+		
+		String fileName = "";
 
 		while (true) {
 
@@ -26,12 +28,13 @@ public class AppDriver {
 			System.out.println("6) Sort the address book");
 			System.out.println("7) Search for a specific entry");
 			System.out.println("8) Display address book");
-			System.out.println("9) Quit");
+			System.out.println("9) Move entry/entries to other address book:");
+			System.out.println("0) Quit");
 
 			System.out.println("\nPlease choose what you'd like to do with the database:");
 
 			int choice = 0;
-			String fileName = "AddressBook.ser";
+			
 			try {
 				choice = Integer.parseInt(br.readLine());
 			} catch (NumberFormatException e) {
@@ -46,14 +49,20 @@ public class AppDriver {
 			switch (choice) {
 			case 1:
 				if(fileName == "" && addressBook.getFileReader() == null){
-					
-					System.out.println("Enter a file name of a address book to be load:");
+
+					System.out.println("\nEnter a file name of a address book to be load:");
 					fileName = br.readLine();
-					addressBook.setFileReader(new FileReader(fileName));
-					addressBook.readRecordsFromFile(fileName);	
-					
+					if(validateFile(fileName)) {
+						addressBook.setFileReader(new FileReader(fileName));
+						addressBook.readRecordsFromFile(fileName);	
+						System.out.println("\nAddress book successfully loaded into memory.");
+
+					} else {
+						System.out.println("\nError: File does not exist");
+						fileName = "";
+					}
 				} else {
-					
+
 					String option = "";
 					while( true ) {
 						System.out.println("\nDo you want to read the data from this file(y/n) : "+fileName);
@@ -63,13 +72,20 @@ public class AppDriver {
 								addressBook.setFileReader(new FileReader(fileName));
 							}
 							addressBook.readRecordsFromFile(fileName);
+							System.out.println("\nAddress book successfully loaded into memory.");
 							break;
 						}
 						else if(option.toUpperCase().equals("N")) {
 							System.out.println("\nEnter a file name of a address book to be load:");
 							fileName = br.readLine();
-							addressBook.setFileReader(new FileReader(fileName));
-							addressBook.readRecordsFromFile(fileName);	
+							if(validateFile(fileName)) {
+								addressBook.setFileReader(new FileReader(fileName));
+								addressBook.readRecordsFromFile(fileName);	
+								System.out.println("\nAddress book successfully loaded into memory.");
+							}else {
+								System.out.println("\nError: File does not exist");
+								fileName = "";
+							}
 							break;
 						}
 						else {
@@ -77,20 +93,22 @@ public class AppDriver {
 						}
 					}
 				}					
-				
+
 				break;
 
 			case 2:
-				
+
 				if(fileName == "" && addressBook.getFileWriter() == null){
-					
+
 					System.out.println("Enter a file name of a address book to be save:");
 					fileName = br.readLine();
 					addressBook.setFileWriter(new FileWriter(fileName));
 					addressBook.saveRecordsToFile(fileName);	
-					
+					System.out.println("Address book successfully saved to file.");
+
+
 				} else {
-					
+
 					String option = "";
 					while( true ) {
 						System.out.println("\nDo you want to save the data to this file(y/n) : "+fileName);
@@ -100,6 +118,7 @@ public class AppDriver {
 								addressBook.setFileWriter(new FileWriter(fileName));
 							}
 							addressBook.saveRecordsToFile(fileName);
+							System.out.println("Address book successfully saved to file.");
 							break;
 						}
 						else if(option.toUpperCase().equals("N")) {
@@ -107,6 +126,7 @@ public class AppDriver {
 							fileName = br.readLine();
 							addressBook.setFileWriter(new FileWriter(fileName));
 							addressBook.saveRecordsToFile(fileName);	
+							System.out.println("Address book successfully saved to file.");
 							break;
 						}
 						else {
@@ -149,7 +169,7 @@ public class AppDriver {
 					addressBookEntry = getUserInfo();
 
 					System.out.println(addressBookEntry.getFirstName() + addressBookEntry.getLastName()
-							+ addressBookEntry.getPhoneNumber());
+					+ addressBookEntry.getPhoneNumber());
 					if (addressBook.removeRecord(addressBookEntry)) {
 						System.out.println("Record successfully deleted...");
 					} else {
@@ -230,51 +250,11 @@ public class AppDriver {
 				break;
 
 			case 7:
-				clearScreen();
-				System.out.println("******************************* Search Entry *******************************");
-				System.out.println("\nSearch the entry by follwoing:");
-				printOptions();
-				int searchChoice = Integer.parseInt(br.readLine());
-				if (searchChoice > 0 && searchChoice < 7) {
-					System.out.println("Please enter text to be searched:");
-					String searchText = br.readLine();
-					List<AddressTemplate> searchResultList = null;
-					
-					switch (searchChoice) {
-					case 1:
-						searchResultList = addressBook.search(searchText, FieldEnums.BY_FIRST_NAME);
-						break;
-					case 2:
-						searchResultList = addressBook.search(searchText, FieldEnums.BY_LAST_NAME);
-						break;
-					case 3:
-						searchResultList = addressBook.search(searchText, FieldEnums.BY_PHONE_NUMBER);
-						break;
-					case 4:
-						searchResultList = addressBook.search(searchText, FieldEnums.BY_ADDRESS);
-						break;
-					case 5:
-						searchResultList = addressBook.search(searchText, FieldEnums.BY_EMAIL);
-						break;
-					case 6:
-						searchResultList = addressBook.search(searchText, FieldEnums.BY_ID);
-						break;	
-					default:
-						break;
-					}
-					
-					if (searchResultList.size() == 0) {
-						System.out.println("No match found!!");
-					} else {
-						for (AddressTemplate entry : searchResultList) {
-
-							System.out.println(
-									"***********************************************************************************************");
-							System.out.println(entry);
-						}
-					}
-				} else {
-					System.out.println("Invalid choice!!");
+				try {
+					getSearchedEntries(addressBook, br);
+				}catch (Exception e) {
+					// TODO: handle exception
+					e.printStackTrace();
 				}
 				break;
 
@@ -283,6 +263,35 @@ public class AppDriver {
 				break;
 
 			case 9:
+				List<AddressTemplate> searchResultEntries = null;
+				try {
+					searchResultEntries = getSearchedEntries(addressBook, br);
+				} catch (Exception e) {
+					// TODO: handle exception
+					e.printStackTrace();
+				}
+				if(searchResultEntries.size() > 0) {
+					while(true) {
+						System.out.println("\nDo you want to move these entries to another address book (y/n):");
+						String moveChoice= br. readLine();
+						if(moveChoice.equalsIgnoreCase("y")){
+							System.out.println("\nEnter the name of address book to which contatcts to be moved:");
+							String newFileName = br.readLine();
+							addressBook.moveEntries(searchResultEntries, newFileName,validateFile(newFileName));
+							System.out.println("\nThe entry/entries has been successfully moved to " + newFileName);
+							break;
+						}
+						else if(moveChoice.equalsIgnoreCase("n")) {
+							break;
+						} else {
+							System.out.println("\nInvalid choice!!");
+							continue;
+						}
+					}
+				}
+
+				break;
+			case 0:
 				System.out.println("\nExiting from the program...\n\nPress any key to get exit....");
 				br.readLine();
 				System.exit(0);
@@ -298,15 +307,15 @@ public class AppDriver {
 	}
 
 	public static void clearScreen() {
-		 try{
-			 System.out.print("\033[H\033[2J");
-			 System.out.flush();  
+		try{
+			System.out.print("\033[H\033[2J");
+			System.out.flush();  
 		} catch (final Exception e){
-		        //  Handle any exceptions.
-		    	e.printStackTrace();
+			//  Handle any exceptions.
+			e.printStackTrace();
 		}
 	}
-	
+
 	public static AddressTemplate getUserInfo() throws IOException
 	{
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -323,7 +332,7 @@ public class AppDriver {
 		addressBookEntry.setEmailAddress(br.readLine());
 		return addressBookEntry;
 	}
-	
+
 	public static void printOptions() {
 		System.out.println("1) By first name:");
 		System.out.println("2) By last name:");
@@ -332,5 +341,127 @@ public class AppDriver {
 		System.out.println("5) By email id:");
 		System.out.println("6) By ID:");
 		System.out.println("Enter your choice:");
+	}
+
+	public static boolean validateFile(String fileName) {
+
+		File file = new File(fileName);
+		return file.exists();
+	}
+
+	public static List<AddressTemplate> getSearchedEntries(AddressBook addressBook,BufferedReader br)throws Exception{
+		clearScreen();
+		System.out.println("******************************* Search Entry *******************************");
+
+
+		int searchChoice = 0;
+
+		while(true) {
+			System.out.println("\nSearch the entry by follwoing:");
+			printOptions();
+			try {
+				searchChoice = Integer.parseInt(br.readLine());
+			} catch (NumberFormatException e) {
+				// TODO: handle exception
+				System.out.println("\nError: Input should be integer number.");
+			}catch (Exception e) {
+				// TODO: handle exception
+				e.printStackTrace();
+			}
+			if(searchChoice > 0 && searchChoice < 7)
+			{
+				break;
+			} else {
+				continue;
+			}
+		}
+
+		int criteriaChoice = 0;
+
+		while(true) {
+			System.out.println("\nSearch the entry by follwoing:");
+			System.out.println(" \n1. Exact match" +
+					"\n2. Starts with"+
+					"\n3. Ends with" +
+					"\n4. Contains");
+			try {
+				criteriaChoice = Integer.parseInt(br.readLine());
+			} catch (NumberFormatException e) {
+				// TODO: handle exception
+				System.out.println("\nError: Input should be integer number.");
+			}catch (Exception e) {
+				// TODO: handle exception
+				e.printStackTrace();
+			}
+			if( criteriaChoice > 0 && criteriaChoice < 5) {
+				break;
+			}
+			else {
+				continue;
+			}
+		}
+
+		CriteriaEnums criteria = CriteriaEnums.CONTAINS;
+
+		switch (criteriaChoice) {
+		case 1:
+			criteria = CriteriaEnums.EXACT_MATCH;
+			break;
+		case 2:
+			criteria = CriteriaEnums.STARTS_WITH;
+			break;
+		case 3:
+			criteria = CriteriaEnums.ENDS_WITH;
+			break;
+		case 4:
+			criteria = CriteriaEnums.CONTAINS;
+			break;
+		default:
+			criteria = CriteriaEnums.CONTAINS;
+			break;
+		}
+
+		System.out.println("Please enter text to be searched:");
+		String searchText = br.readLine();
+		List<AddressTemplate> searchResultList = null;
+
+		switch (searchChoice) {
+		case 1:
+			searchResultList = addressBook.search(searchText, FieldEnums.BY_FIRST_NAME, criteria);
+			break;
+		case 2:
+			searchResultList = addressBook.search(searchText, FieldEnums.BY_LAST_NAME, criteria);
+			break;
+		case 3:
+			searchResultList = addressBook.search(searchText, FieldEnums.BY_PHONE_NUMBER, criteria);
+			break;
+		case 4:
+			searchResultList = addressBook.search(searchText, FieldEnums.BY_ADDRESS, criteria);
+			break;
+		case 5:
+			searchResultList = addressBook.search(searchText, FieldEnums.BY_EMAIL, criteria);
+			break;
+		case 6:
+			searchResultList = addressBook.search(searchText, FieldEnums.BY_ID, criteria);
+			break;	
+		default:
+			searchResultList = addressBook.search(searchText, FieldEnums.BY_ID, criteria);
+			break;
+		}
+
+		if (searchResultList.size() == 0) {
+			System.out.println("No match found!!");
+		} else {
+			System.out.println(
+					"*********************************** Match found *****************************************");
+			for (AddressTemplate entry : searchResultList) {
+
+
+				System.out.println(entry);
+				System.out.println(
+						"***********************************************************************************************");
+			}
+		}
+		return searchResultList;
 	}
 }

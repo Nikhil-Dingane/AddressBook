@@ -66,49 +66,44 @@ public class AddressBook {
 		
 	}
 
-	public List<AddressTemplate> search(String searchText, FieldEnums searchChoice) {
+	public List<AddressTemplate> search(String searchText, FieldEnums searchChoice, CriteriaEnums criteria) {
 		List<AddressTemplate> searchResultList = new ArrayList<AddressTemplate>();
 		if (searchChoice == FieldEnums.BY_FIRST_NAME) {
 			for (AddressTemplate record : addressBookList) {
-				if (record.getFirstName().contains(searchText)) {
+				if (compareByCriteria(record.getFirstName(),searchText,criteria)) {
 					searchResultList.add(record);
 				}
 			}
-			return searchResultList;
 		} else if (searchChoice == FieldEnums.BY_LAST_NAME) {
 			for (AddressTemplate record : addressBookList) {
-				if (record.getLastName().equals(searchText)) {
+				if (compareByCriteria(record.getLastName(),searchText,criteria)) {
 					searchResultList.add(record);
 				}
 			}
-			return searchResultList;
 		} else if (searchChoice == FieldEnums.BY_PHONE_NUMBER) {
 			for (AddressTemplate record : addressBookList) {
-				if (record.getPhoneNumber().equals(searchText)) {
+				if (compareByCriteria(record.getPhoneNumber(),searchText,criteria)) {
 					searchResultList.add(record);
 				}
 			}
-			return searchResultList;
 		} else if (searchChoice == FieldEnums.BY_ADDRESS) {
 			for (AddressTemplate record : addressBookList) {
-				if (record.getAdress().equals(searchText)) {
+				if (compareByCriteria(record.getAdress(),searchText,criteria)) {
 					searchResultList.add(record);
 				}
 			}
-			return searchResultList;
 		} else if (searchChoice == FieldEnums.BY_EMAIL) {
 			for (AddressTemplate record : addressBookList) {
-				if (record.getEmailAddress().equals(searchText)) {
+				if (compareByCriteria(record.getEmailAddress(),searchText,criteria)) {
 					searchResultList.add(record);
 				}
 			}
-			return searchResultList;
 		} else if (searchChoice == FieldEnums.BY_ID) {
 
-			AddressTemplate addressBookEntry = searchById(Integer.parseInt(searchText));
-
-			if (addressBookEntry != null) {
-				searchResultList.add(addressBookEntry);
+			for (AddressTemplate record : addressBookList) {
+				if (compareByCriteria(String.valueOf(record.getId()),searchText,criteria)) {
+					searchResultList.add(record);
+				}
 			}
 		}
 
@@ -170,6 +165,38 @@ public class AddressBook {
 	protected void finalize() throws Throwable {
 		fileReader.close();
 		fileWriter.close();
+	}
+	
+	public void moveEntries(List<AddressTemplate> listOfEntriesTobeMoved, String fileName, boolean addressBookExists) {
+		if(addressBookExists) {
+			FileReader newFileReader = new FileReader(fileName);
+			List<AddressTemplate> newFileEntriesList = newFileReader.readFile();
+			newFileEntriesList.addAll(listOfEntriesTobeMoved);
+			(new FileWriter(fileName)).writeFile(newFileEntriesList);
+		} else {
+			(new FileWriter(fileName)).writeFile(listOfEntriesTobeMoved);
+		}
+		
+		
+		for(AddressTemplate entry: listOfEntriesTobeMoved) {
+			this.removeRecord(entry);
+		}
+		
+	}
+	
+	private boolean compareByCriteria(String str1, String str2, CriteriaEnums criteria) {
+		switch (criteria) {
+		case EXACT_MATCH:
+			return str1.toLowerCase().equals(str2.toLowerCase());
+		case STARTS_WITH:
+			return str1.toLowerCase().startsWith(str2.toLowerCase());
+		case ENDS_WITH:
+			return str1.toLowerCase().endsWith(str2.toLowerCase());
+		case CONTAINS:
+			return str1.toLowerCase().contains(str2.toLowerCase());
+		default:
+			return false;
+		}
 	}
 	
 }
